@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Editor - LocalTube</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📷 Photo Editor</h1>
+            <div class="header-actions">
+                <button id="btnNew" class="btn btn-primary">New</button>
+                <button id="btnOpen" class="btn">Open</button>
+                <button id="btnSave" class="btn btn-success">Save</button>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <div class="workspace">
+            <!-- Left Toolbar -->
+            <aside class="toolbar toolbar-left">
+                <div class="tool-group">
+                    <button class="tool-btn active" data-tool="move" title="Move (V)">
+                        <span>✋</span>
+                    </button>
+                    <button class="tool-btn" data-tool="select" title="Select (M)">
+                        <span>⬚</span>
+                    </button>
+                    <button class="tool-btn" data-tool="crop" title="Crop (C)">
+                        <span>⧉</span>
+                    </button>
+                </div>
+                
+                <div class="tool-group">
+                    <button class="tool-btn" data-tool="brush" title="Brush (B)">
+                        <span>🖌️</span>
+                    </button>
+                    <button class="tool-btn" data-tool="eraser" title="Eraser (E)">
+                        <span>⌫</span>
+                    </button>
+                    <button class="tool-btn" data-tool="fill" title="Fill (G)">
+                        <span>🪣</span>
+                    </button>
+                    <button class="tool-btn" data-tool="picker" title="Color Picker (I)">
+                        <span>💉</span>
+                    </button>
+                </div>
+
+                <div class="tool-group">
+                    <button class="tool-btn" data-tool="text" title="Text (T)">
+                        <span>T</span>
+                    </button>
+                    <button class="tool-btn" data-tool="shape" title="Shape (U)">
+                        <span>⬜</span>
+                    </button>
+                    <button class="tool-btn" data-tool="line" title="Line (L)">
+                        <span>╱</span>
+                    </button>
+                </div>
+
+                <div class="tool-group">
+                    <button class="tool-btn" data-tool="zoom" title="Zoom (Z)">
+                        <span>🔍</span>
+                    </button>
+                    <button class="tool-btn" data-tool="hand" title="Hand (H)">
+                        <span>✋</span>
+                    </button>
+                </div>
+
+                <div class="tool-options">
+                    <label>Size:</label>
+                    <input type="range" id="brushSize" min="1" max="100" value="10">
+                    <span id="brushSizeValue">10</span>
+                    
+                    <label>Opacity:</label>
+                    <input type="range" id="brushOpacity" min="1" max="100" value="100">
+                    <span id="brushOpacityValue">100%</span>
+                    
+                    <label>Color:</label>
+                    <input type="color" id="brushColor" value="#000000">
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <main class="canvas-area">
+                <div class="canvas-container" id="canvasContainer">
+                    <canvas id="mainCanvas"></canvas>
+                    <canvas id="drawingCanvas"></canvas>
+                </div>
+                <div class="zoom-controls">
+                    <button id="zoomOut">−</button>
+                    <span id="zoomLevel">100%</span>
+                    <button id="zoomIn">+</button>
+                    <button id="zoomFit">Fit</button>
+                </div>
+            </main>
+
+            <!-- Right Panels -->
+            <aside class="toolbar toolbar-right">
+                <!-- Layers Panel -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Layers</h3>
+                        <button id="addLayer" class="btn-small">+</button>
+                    </div>
+                    <div class="panel-content">
+                        <div id="layersList" class="layers-list"></div>
+                    </div>
+                </div>
+
+                <!-- Adjustments Panel -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Adjustments</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="adjustment-group">
+                            <label>Brightness</label>
+                            <input type="range" id="brightness" min="-100" max="100" value="0">
+                        </div>
+                        <div class="adjustment-group">
+                            <label>Contrast</label>
+                            <input type="range" id="contrast" min="-100" max="100" value="0">
+                        </div>
+                        <div class="adjustment-group">
+                            <label>Saturation</label>
+                            <input type="range" id="saturation" min="-100" max="100" value="0">
+                        </div>
+                        <div class="adjustment-group">
+                            <label>Hue Rotate</label>
+                            <input type="range" id="hueRotate" min="0" max="360" value="0">
+                        </div>
+                        <div class="adjustment-group">
+                            <label>Blur</label>
+                            <input type="range" id="blur" min="0" max="20" value="0">
+                        </div>
+                        <div class="adjustment-group">
+                            <label>Grayscale</label>
+                            <input type="range" id="grayscale" min="0" max="100" value="0">
+                        </div>
+                        <div class="adjustment-group">
+                            <label>Sepia</label>
+                            <input type="range" id="sepia" min="0" max="100" value="0">
+                        </div>
+                        <div class="adjustment-group">
+                            <label>Invert</label>
+                            <input type="range" id="invert" min="0" max="100" value="0">
+                        </div>
+                        <button id="resetAdjustments" class="btn">Reset All</button>
+                    </div>
+                </div>
+
+                <!-- Filters Panel -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Filters</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="filter-buttons">
+                            <button class="filter-btn" data-filter="none">None</button>
+                            <button class="filter-btn" data-filter="vintage">Vintage</button>
+                            <button class="filter-btn" data-filter="cool">Cool</button>
+                            <button class="filter-btn" data-filter="warm">Warm</button>
+                            <button class="filter-btn" data-filter="bw">B&W</button>
+                            <button class="filter-btn" data-filter="dramatic">Dramatic</button>
+                            <button class="filter-btn" data-filter="fade">Fade</button>
+                            <button class="filter-btn" data-filter="vivid">Vivid</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Panel -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>History</h3>
+                        <button id="clearHistory" class="btn-small">Clear</button>
+                    </div>
+                    <div class="panel-content">
+                        <div id="historyList" class="history-list"></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Bottom Bar -->
+        <footer class="status-bar">
+            <span id="canvasInfo">Canvas: 800 × 600</span>
+            <span id="cursorPos">X: 0, Y: 0</span>
+            <span id="toolInfo">Tool: Move</span>
+        </footer>
+    </div>
+
+    <!-- New Image Dialog -->
+    <div id="newImageDialog" class="modal">
+        <div class="modal-content">
+            <h2>New Image</h2>
+            <div class="form-group">
+                <label>Width:</label>
+                <input type="number" id="newWidth" value="800" min="1" max="5000">
+                <span>px</span>
+            </div>
+            <div class="form-group">
+                <label>Height:</label>
+                <input type="number" id="newHeight" value="600" min="1" max="5000">
+                <span>px</span>
+            </div>
+            <div class="form-group">
+                <label>Background:</label>
+                <select id="newBackground">
+                    <option value="white">White</option>
+                    <option value="transparent">Transparent</option>
+                    <option value="black">Black</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button id="cancelNew" class="btn">Cancel</button>
+                <button id="createNew" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
